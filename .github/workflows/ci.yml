@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+      # The pinned scratch-vm and scratch-render are Git dependencies; their install scripts would rebuild
+      # them with webpack, which the runtime does not use.
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser

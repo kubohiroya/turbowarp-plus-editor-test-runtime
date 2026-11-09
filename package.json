@@ -1,0 +1,50 @@
+{
+  "name": "@kubohiroya/turbowarp-plus-editor-test-runtime",
+  "version": "0.1.0",
+  "description": "A minimal TurboWarp Plus Editor runtime for package tests: the Editor's pinned VM and Scratch Blocks with one workspace, implementing the editor host contract",
+  "type": "module",
+  "license": "MPL-2.0",
+  "author": "Hiroya Kubo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubohiroya/turbowarp-plus-editor-test-runtime.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./node/index.d.ts",
+      "default": "./node/index.js"
+    },
+    "./page": {
+      "types": "./page.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "node",
+    "src",
+    "page.d.ts",
+    "pins.json",
+    "THIRD_PARTY_NOTICES.md",
+    "README.md",
+    "README.ja.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test test/*.test.js",
+    "test:browser": "npm run build && node --test test/*.browser.js"
+  },
+  "dependencies": {
+    "@kubohiroya/turbowarp-plus-editor-host": "0.1.0",
+    "@kubohiroya/turbowarp-plus-editor-test-runtime-blocks": "0.1.0",
+    "esbuild": "0.25.12"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@turbowarp/scratch-storage": "2.0.0",
+    "@turbowarp/scratch-svg-renderer": "1.1.0",
+    "buffer": "4.9.2",
+    "scratch-render": "git+https://github.com/TurboWarp/scratch-render.git#655edeb5a7b107aa26fb02a3beb0bbcfb8c350ff",
+    "scratch-vm": "git+https://github.com/kubohiroya/scratch-vm.git#3ac5fb7052ffc371f1e615245fcc15d61a368237"
+  }
+}
