@@ -46,6 +46,11 @@ await page.evaluate(project => setup(project), project);
 `EditorRuntime.start(container, {locale, project})` resolves with an `EditorHost` plus:
 - `workspace`: the workspace that shows the VM's editing target.
 - `loadProject(project)`
+- `registerExtension(extension)`: registers an extension object as the VM registers its built-in ones (no sandbox, Loader or review). Its blocks, menus and custom fields are defined in the workspace, as the GUI does when an extension is added or changes. Dynamic blocks are not supported: defining them needs the GUI's own block factory.
+
+The page also has:
+- `EditorRuntime.vmModules`: the VM's own `ScratchCommon`, `createTranslate`, `staticFetch` and central `dispatch`, as the Loader's registrar needs them. `dispatch` is a singleton, and these are the instances the runtime's VM uses.
+- `EditorRuntime.VirtualMachine`: the VM constructor, for a test that needs a second VM, such as a preview.
 
 The types for the page are in `@kubohiroya/turbowarp-plus-editor-test-runtime/page`.
 

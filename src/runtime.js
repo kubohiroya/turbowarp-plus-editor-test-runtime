@@ -6,6 +6,30 @@ import {deserializeBlocks} from 'scratch-vm/src/serialization/sb3.js';
 import ScratchStorage from '@turbowarp/scratch-storage';
 import ScratchRender from 'scratch-render';
 import {BitmapAdapter} from '@turbowarp/scratch-svg-renderer';
+import ScratchCommon from 'scratch-vm/src/extension-support/tw-extension-api-common.js';
+import createTranslate from 'scratch-vm/src/extension-support/tw-l10n.js';
+import staticFetch from 'scratch-vm/src/util/tw-static-fetch.js';
+import dispatch from 'scratch-vm/src/dispatch/central-dispatch.js';
+
+/**
+ * The VM modules an extension host needs as the VM's own instances: `dispatch` is a singleton, so a
+ * copy from anywhere else would not be the one this VM uses. The Loader's registrar takes these.
+ */
+export const vmModules = Object.freeze({ScratchCommon, createTranslate, staticFetch, dispatch});
+/** The VM constructor, for a test that needs a second VM, such as a preview. */
+export {VirtualMachine};
+
+// Define an extension's blocks in Scratch Blocks, as the GUI does when one is added or changes:
+// custom fields and menus are blocks too, so they are defined first. Dynamic blocks need the GUI's own
+// block factory and are not supported here.
+function defineExtensionBlocks(Blockly, categoryInfo) {
+    const json = [
+        ...Object.values(categoryInfo.customFieldTypes || {}).map(field => field.scratchBlocksDefinition),
+        ...(categoryInfo.menus || []),
+        ...(categoryInfo.blocks || [])
+    ].filter(block => block && block.json && !(block.info && block.info.isDynamic)).map(block => block.json);
+    if (json.length) Blockly.defineBlocksWithJsonArray(json);
+}
 
 function workspaceXml(vm, target) {
     const variables = Object.assign({}, vm.runtime.getTargetForStage().variables, target.variables);
@@ -30,6 +54,9 @@ export async function start(container, {locale = 'en', project} = {}) {
         zoom: {controls: false, wheel: false, startScale: 0.675}, scrollbars: true
     });
     workspace.addChangeListener(vm.blockListener);
+    const defineBlocks = categoryInfo => defineExtensionBlocks(Blockly, categoryInfo);
+    vm.on('EXTENSION_ADDED', defineBlocks);
+    vm.on('BLOCKSINFO_UPDATE', defineBlocks);
     vm.on('workspaceUpdate', data => {
         Blockly.Events.disable();
         try {Blockly.Xml.clearWorkspaceAndLoadFromXml(Blockly.Xml.textToDom(data.xml), workspace);}
@@ -53,6 +80,17 @@ export async function start(container, {locale = 'en', project} = {}) {
         refreshBlockViews(targets) {
             if (targets.includes(vm.editingTarget)) vm.emit('workspaceUpdate', {xml: workspaceXml(vm, vm.editingTarget)});
             vm.emit('EXTERNAL_BLOCKS_RELOADED', targets);
+        },
+        /**
+         * Registers an extension object with the VM as the VM does for its built-in ones: no sandbox, no
+         * Loader and no review. Its blocks are defined in the workspace. Returns the VM service name.
+         */
+        registerExtension(extension) {
+            const {id} = extension.getInfo();
+            if (vm.extensionManager.isExtensionLoaded(id)) throw new Error(`Extension ${id} is already registered`);
+            const service = vm.extensionManager._registerInternalExtension(extension);
+            vm.extensionManager._loadedExtensions.set(id, service);
+            return service;
         },
         async loadProject(json) {
             await vm.loadProject(typeof json === 'string' ? json : JSON.stringify(json));

@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-plus-editor-test-runtime",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A minimal TurboWarp Plus Editor runtime for package tests: the Editor's pinned VM and Scratch Blocks with one workspace, implementing the editor host contract",
   "type": "module",
   "license": "MPL-2.0",
