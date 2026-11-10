@@ -43,9 +43,14 @@ await page.goto(server.url);
 await page.evaluate(project => setup(project), project);
 ```
 
-`EditorRuntime.start(container, {locale, project})` は、`EditorHost` に次の 2 つを加えたもので解決します。
+`EditorRuntime.start(container, {locale, project})` は、`EditorHost` に次を加えたもので解決します。
 - `workspace`：VM の編集対象を表示するワークスペース。
 - `loadProject(project)`
+- `registerExtension(extension)`：拡張機能のオブジェクトを、VM が組み込みの拡張機能を登録するのと同じように登録します（sandbox・Loader・確認なし）。そのブロック・メニュー・独自のフィールドを、GUI が拡張機能の追加や変更のときに行うのと同じように、ワークスペースに定義します。動的なブロックは扱いません。その定義には GUI 自身のブロックの工場が要るためです。
+
+ページには次もあります。
+- `EditorRuntime.vmModules`：VM 自身の `ScratchCommon`・`createTranslate`・`staticFetch`・central `dispatch`。Loader の registrar が必要とするものです。`dispatch` はシングルトンで、これらは runtime の VM が使うインスタンスそのものです。
+- `EditorRuntime.VirtualMachine`：VM の構築子。プレビューのような 2 つ目の VM が要る試験のためです。
 
 ページ用の型は `@kubohiroya/turbowarp-plus-editor-test-runtime/page` にあります。
 
