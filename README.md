@@ -68,3 +68,9 @@ Publishing happens in `.github/workflows/release.yml`, when a `v<version>` tag i
 ## License
 
 MPL-2.0. `dist/runtime.js` also contains MPL-2.0, BSD, MIT, ISC and Apache-2.0 packages, listed in `THIRD_PARTY_NOTICES.md`. Where a package offers a choice of licenses, the choice is MPL-2.0 or MIT. This package contains no GPL code and imports no GPL module.
+
+## Pin and contract check for Editor #823
+
+This candidate follows GUI `60b87e2f2503206847f509285aa4de3cee3670c7` and VM `88a2c06e9deb3dd652c52c20daf4f728b387d41d`. Blocks 0.1.1 comes from `4113c5348e6b4c76da9071a1800a62ab96ef793f`; renderer, storage and SVG renderer also match that GUI lockfile. Acceptance requires the existing three build checks, five browser checks, and the same host contract check in the real Editor. Roll back pins.json and the VM manifest/lock together, then rebuild.
+
+This does not replace GUI, sandbox worker, Desktop or cross-tab OPFS checks. Incoming-file progress belongs to Workbench; real file/approval/VM wiring stays in the Editor. WebKit storage/reopen and packaged HTML consent require their actual browser and Electron environments. These remaining cases do not require adding GUI or worker implementations to this runtime. A future worker-dependent migration needs separate capability and execution proof. Tracking: [Editor #823](https://github.com/kubohiroya/turbowarp-plus-editor/issues/823).

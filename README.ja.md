@@ -68,3 +68,9 @@ npm への公開は `.github/workflows/release.yml` が行います。`v<版>` �
 ## ライセンス
 
 MPL-2.0。`dist/runtime.js` には、MPL-2.0・BSD・MIT・ISC・Apache-2.0 のパッケージも入っています。一覧は `THIRD_PARTY_NOTICES.md` にあります。ライセンスを選べるパッケージは、MPL-2.0 か MIT を選んでいます。GPL のコードを含まず、GPL のモジュールも import しません。
+
+## Editor #823 での固定と契約の照合
+
+本候補は Editor が固定する GUI `60b87e2f2503206847f509285aa4de3cee3670c7`、VM `88a2c06e9deb3dd652c52c20daf4f728b387d41d` に追従する。Blocks 0.1.1 の元リビジョン `4113c5348e6b4c76da9071a1800a62ab96ef793f`、renderer・storage・SVG renderer も GUI の lockfile と一致する。DoD は既存 build 3件・browser 5件と、実 Editor の同じ host 契約検証の成功。切り戻しは `pins.json` と VM の manifest/lock を一緒に戻し、再ビルドする。
+
+これは GUI の画面・sandbox worker・Desktop・OPFS の別タブ受け渡しの代替ではない。#823 の進捗表示は Workbench で単独検証し、実ファイル・承認と VM の結線は Editor に保持する。WebKit の保管／再開は実ブラウザー、配布 HTML の承認は実 Electron で検証する。この残件のために最小 runtime へ GUI や worker を持ち込む必要はなく、将来 worker を使うテストを移す場合は別途能力と実行成功を確認する。追跡は [Editor #823](https://github.com/kubohiroya/turbowarp-plus-editor/issues/823)。

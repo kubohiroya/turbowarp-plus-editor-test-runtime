@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-plus-editor-test-runtime",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A minimal TurboWarp Plus Editor runtime for package tests: the Editor's pinned VM and Scratch Blocks with one workspace, implementing the editor host contract",
   "type": "module",
   "license": "MPL-2.0",
@@ -45,6 +45,6 @@
     "@turbowarp/scratch-svg-renderer": "1.1.0",
     "buffer": "4.9.2",
     "scratch-render": "git+https://github.com/TurboWarp/scratch-render.git#655edeb5a7b107aa26fb02a3beb0bbcfb8c350ff",
-    "scratch-vm": "git+https://github.com/kubohiroya/scratch-vm.git#e623546e0e173d70e0314d06d8a17bf84c72afeb"
+    "scratch-vm": "git+https://github.com/kubohiroya/scratch-vm.git#88a2c06e9deb3dd652c52c20daf4f728b387d41d"
   }
 }
